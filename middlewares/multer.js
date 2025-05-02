@@ -41,3 +41,21 @@ const storage = multer.diskStorage({
 });
 
 export const upload = multer({ storage });
+
+
+
+// *🧪 Example usage in a route
+
+// ? For single upload
+// app.post("/upload", upload.single("file"), (req, res) => {
+//     res.json({ file: req.file });
+// });
+
+// ? For multiple types
+// app.post("/upload/multiple", upload.fields([
+//     { name: "image" },
+//     { name: "video" },
+//     { name: "document" }
+// ]), (req, res) => {
+//     res.json({ files: req.files });
+// });
