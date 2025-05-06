@@ -1,6 +1,6 @@
 import express from "express";
 
-const taskRouter = new express.Router();
+const taskRouter = express.Router();
 
 
 export default taskRouter;

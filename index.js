@@ -32,7 +32,6 @@ app.use(cors({
 }
 ));
 
-
 // Configuration Middlewares
 app.use(express.json());
 app.use(cookieParser());
