@@ -2,9 +2,9 @@ import Comment from "../models/comment.model.js";
 
 export const createComment = async (req, res) => {
     try {
-        const { content, created_by, task } = req.body;
+        const { content, created_by, task, project } = req.body;
 
-        if (!content || !created_by || !task) {
+        if (!content || !created_by || !task || !project) {
             return res.status(400).json({ message: "All fields are required" });
         }
 

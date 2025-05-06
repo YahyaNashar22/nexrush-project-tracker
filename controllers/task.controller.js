@@ -1,3 +1,4 @@
+import Comment from "../models/comment.model.js";
 import Task from "../models/task.model.js";
 
 import removeFile from "../utils/removeFile.js"
@@ -111,6 +112,8 @@ export const deleteTask = async (req, res) => {
         if (!existingTask) return res.status(404).json({ message: "Task not found." });
 
         if (existingTask.asset) removeFile(existingTask.asset);
+
+        await Comment.deleteMany({ task: id });
 
         await Task.findByIdAndDelete(id);
 

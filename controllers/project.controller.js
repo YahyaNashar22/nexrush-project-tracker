@@ -1,4 +1,5 @@
 import Project from "../models/project.model.js";
+import Task from "../models/task.model.js";
 
 export const createProject = async (req, res) => {
     try {
@@ -62,9 +63,19 @@ export const updateProject = async (req, res) => {
 export const deleteProject = async (req, res) => {
     try {
         const { id } = req.params;
-        const deleted = await Project.findByIdAndDelete(id);
 
-        if (!deleted) return res.status(404).json({ message: "Project not found" });
+        const existingProject = await Project.findById(id);
+        if (!existingProject) return res.status(404).json({ message: "Project not found" });
+
+        await Task.deleteMany({ project: id });
+
+        await Comment.deleteMany({ project: id });
+
+
+        await Project.findByIdAndDelete(id);
+
+
+        // Delete all related tasks
 
         const io = req.app.get("io");
         io.emit("project:deleted", { id });

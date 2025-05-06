@@ -18,6 +18,11 @@ const commentSchema = new Schema(
             ref: "Task",
             required: true
         },
+        project: {
+            type: Schema.Types.ObjectId,
+            ref: "Project",
+            required: true
+        },
     },
     {
         timestamps: true
