@@ -1,20 +1,24 @@
 import Task from "../models/task.model.js";
 
+import removeFile from "../utils/removeFile.js"
+
 export const createTask = async (req, res) => {
     try {
-        const { title, description, status, deadline, asset, assignee, created_by, project } = req.body;
+        const { title, description, status, deadline, assignee, created_by, project } = req.body;
 
         if (!title || !deadline || !assignee || !created_by || !project) {
             return res.status(400).json({ message: "All fields are required." });
         }
+
+        const asset = req.file?.filename;
 
         const task = await Task.create({
             title,
             description,
             status,
             deadline,
-            asset,
             assignee,
+            asset,
             created_by,
             project
         });
@@ -55,9 +59,26 @@ export const getTaskById = async (req, res) => {
 
 export const updateTask = async (req, res) => {
     try {
-        const task = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { id } = req.params;
 
-        if (!task) return res.status(404).json({ message: "Task not found" });
+        const existingTask = await Task.findById(id);
+        if (!existingTask) return res.status(404).json({ message: "Task not found." });
+
+        const { title, description, status, deadline, assignee } = req.body;
+        let updateData = {};
+
+        if (title) updateData.title = title;
+        if (description) updateData.description = description;
+        if (status) updateData.status = status;
+        if (deadline) updateData.deadline = deadline;
+        if (assignee) updateData.assignee = assignee;
+
+        const asset = req.file?.filename;
+
+        if (asset && existingTask.asset) {
+            removeFile(existingTask.asset);
+            updateData.asset = asset;
+        }
 
         res.status(200).json(task);
     } catch (error) {
@@ -67,9 +88,14 @@ export const updateTask = async (req, res) => {
 
 export const deleteTask = async (req, res) => {
     try {
-        const task = await Task.findByIdAndDelete(req.params.id);
+        const id = req.params.id;
 
-        if (!task) return res.status(404).json({ message: "Task not found" });
+        const existingTask = await Task.findById(id);
+        if (!existingTask) return res.status(404).json({ message: "Task not found." });
+
+        if (existingTask.asset) removeFile(existingTask.asset);
+
+        const task = await Task.findByIdAndDelete(id);
 
         res.status(200).json({ message: "Task deleted successfully" });
     } catch (error) {
