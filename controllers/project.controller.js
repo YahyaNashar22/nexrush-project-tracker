@@ -88,14 +88,14 @@ export const deleteProject = async (req, res) => {
 
 
 // ? FRONTEND
-socket.on("project:created", (project) => {
-    // Add to project list
-});
+// socket.on("project:created", (project) => {
+//     // Add to project list
+// });
 
-socket.on("project:updated", (project) => {
-    // Update project in state
-});
+// socket.on("project:updated", (project) => {
+//     // Update project in state
+// });
 
-socket.on("project:deleted", ({ id }) => {
-    // Remove project by ID
-});
+// socket.on("project:deleted", ({ id }) => {
+//     // Remove project by ID
+// });

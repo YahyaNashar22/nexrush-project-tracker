@@ -17,9 +17,18 @@ import projectRouter from './routes/project.routes.js';
 import commentRouter from './routes/comment.routes.js';
 
 
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
+
+
+// Declaration
+dotenv.config();
+const app = express();
+
+// Socket Server
 const server = http.createServer(app);
-
 const io = new Server(server, {
     cors: {
         origin: ["http://localhost:5173"],
@@ -36,18 +45,8 @@ io.on("connection", (socket) => {
     });
 });
 
-app.set("io", io); // Make io accessible inside routes/controllers
-
-
-// Get __dirname equivalent in ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-
-
-// Declaration
-dotenv.config();
-const app = express();
+// Make io accessible inside routes/controllers
+app.set("io", io);
 
 // CORS Policies
 app.use(cors({
