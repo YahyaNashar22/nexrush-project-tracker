@@ -8,6 +8,10 @@ import { fileURLToPath } from 'url';
 
 
 import databaseConnection from "./db/databaseConnection.js";
+import userRouter from './routes/user.routes.js';
+import taskRouter from './routes/task.routes.js';
+import projectRouter from './routes/project.routes.js';
+import commentRouter from './routes/comment.routes.js';
 
 
 // Get __dirname equivalent in ES modules
@@ -36,6 +40,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("uploads"));
 
 // Routes / APIs
+
+app.use('/api/user', userRouter);
+app.use('/api/task', taskRouter);
+app.use('/api/project', projectRouter);
+app.use('/api/comment', commentRouter);
 
 
 
