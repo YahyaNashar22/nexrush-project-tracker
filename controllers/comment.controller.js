@@ -12,6 +12,10 @@ export const createComment = async (req, res) => {
 
         const populatedComment = await comment.populate("created_by", "fullname email");
 
+        // Emit to all connected clients
+        const io = req.app.get("io");
+        io.emit("comment:new", populatedComment);
+
         res.status(201).json(populatedComment);
     } catch (error) {
         res.status(500).json({ message: "Error creating comment", error: error.message });
@@ -38,6 +42,9 @@ export const deleteComment = async (req, res) => {
             return res.status(404).json({ message: "Comment not found" });
         }
 
+        const io = req.app.get("io");
+        io.emit("comment:deleted", { id: comment._id });
+
         res.status(200).json({ message: "Comment deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: "Error deleting comment", error: error.message });
@@ -63,9 +70,39 @@ export const updateComment = async (req, res) => {
             return res.status(404).json({ message: "Comment not found" });
         }
 
+        const io = req.app.get("io");
+        io.emit("comment:updated", updatedComment);
+
+
         res.status(200).json(updatedComment);
     } catch (error) {
         res.status(500).json({ message: "Error updating comment", error: error.message });
     }
 };
 
+
+
+
+// ✅ 3. Listen for Events in the Frontend
+// In your React app (or any frontend), connect to Socket.IO:
+
+// ts
+// Copy
+// Edit
+// import { io } from "socket.io-client";
+// const socket = io("http://localhost:5000"); // your backend URL
+
+// socket.on("comment:new", (comment) => {
+//     console.log("New Comment:", comment);
+//     // Add it to state
+// });
+
+// socket.on("comment:updated", (comment) => {
+//     console.log("Comment Updated:", comment);
+//     // Update state
+// });
+
+// socket.on("comment:deleted", ({ id }) => {
+//     console.log("Comment Deleted:", id);
+//     // Remove it from state
+// });
