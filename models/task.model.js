@@ -10,7 +10,7 @@ const taskSchema = new Schema(
         },
         description: {
             type: String,
-            required: true,
+            required: false,
         },
         status: {
             type: String,
@@ -24,7 +24,7 @@ const taskSchema = new Schema(
         },
         asset: {
             type: String,
-            required: true,
+            required: false,
         },
         assignee: {
             type: Schema.Types.ObjectId,
