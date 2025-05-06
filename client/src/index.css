@@ -11,12 +11,34 @@
 
   --bg: #242424;
   --bg-white: #f9f9f9;
+  --soft-white: #e4e4e7;
   --bg-btn: #1a1a1a;
   --blue: #646cff;
   --blue-hover: #535bf2;
+  --red: #ff6464;
+  --red-hover: #f25353;
+  --border: #364153;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@theme {
+  --color-bg: #242424;
+  --color-bg-white: #f9f9f9;
+  --color-bg-btn: #1a1a1a;
+
+  --color-blue: #646cff;
+  --color-blue-hover: #535bf2;
+
+  --color-red: #ff6464;
+  --color-red-hover: #f25353;
+
+  --color-font-white: #f9f9f9;
+  --color-soft-white: #e4e4e7;
+
+  --color-border: #364153;
+  --color-secondary-grey: #99a1af;
 }

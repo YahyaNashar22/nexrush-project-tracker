@@ -5,25 +5,25 @@ import SideBarItem from "../components/SideBarItem";
 const SidePanel = () => {
   const [isOpen, setIsOpen] = useState(true);
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleSidebar = () => setIsOpen((prev) => !prev);
 
   return (
     <div
-      className={`flex flex-col h-screen bg-gray-900 text-white transition-all duration-300 ${
+      className={`flex flex-col h-screen bg-bg-btn text-font-white transition-all duration-300 ${
         isOpen ? "w-64" : "w-20"
-      }`}
+      } relative z-10`}
     >
       {/* Top: Logo & Toggle */}
-      <div className="flex items-center justify-between p-4 border-b border-gray-700">
+      <div className="flex items-center justify-between p-4 border-b border-border">
         <span
           className={`text-xl font-bold transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
           }`}
         >
-          MyApp
+          NexRush
         </span>
-        <button onClick={toggleSidebar}>
-          <Menu className="h-6 w-6 text-white" />
+        <button onClick={toggleSidebar} className="absolute right-10">
+          <Menu className="h-6 w-6 text-font-white" />
         </button>
       </div>
 
@@ -35,14 +35,14 @@ const SidePanel = () => {
       </nav>
 
       {/* Bottom: User Info and Logout */}
-      <div className="p-4 border-t border-gray-700 flex items-center justify-between">
+      <div className="p-4 border-t border-border flex items-center justify-between">
         {isOpen && (
           <div>
             <div className="text-sm font-semibold">John Doe</div>
-            <div className="text-xs text-gray-400">john@example.com</div>
+            <div className="text-xs text-secondary-grey">john@example.com</div>
           </div>
         )}
-        <button className="text-red-400 hover:text-red-300 ml-auto">
+        <button className="text-red hover:text-red-hover ml-auto">
           <LogOut className="h-5 w-5" />
         </button>
       </div>

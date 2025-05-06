@@ -7,8 +7,8 @@ const SideBarItem = ({
   text: string;
   isOpen: boolean;
 }) => (
-  <div className="flex items-center space-x-4 p-2 hover:bg-gray-800 rounded cursor-pointer">
-    <div className="text-white">{icon}</div>
+  <div className="flex items-center space-x-4 p-2 hover:bg-red-hover rounded cursor-pointer transition-all duration-300">
+    <div className="text-font-white">{icon}</div>
     {isOpen && <span>{text}</span>}
   </div>
 );
