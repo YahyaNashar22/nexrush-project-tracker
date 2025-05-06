@@ -23,7 +23,16 @@ export const createTask = async (req, res) => {
             project
         });
 
-        res.status(201).json(task);
+        const populatedTask = await task.populate([
+            { path: "assignee", select: "fullname email" },
+            { path: "created_by", select: "fullname email" },
+            { path: "project", select: "title" }
+        ]);
+
+        const io = req.app.get("io");
+        io.emit("task:created", populatedTask);
+
+        res.status(201).json(populatedTask);
     } catch (error) {
         res.status(500).json({ message: "Error creating task", error: error.message });
     }
@@ -80,6 +89,14 @@ export const updateTask = async (req, res) => {
             updateData.asset = asset;
         }
 
+        const task = await Task.findByIdAndUpdate(id, updateData, { new: true })
+            .populate("assignee", "fullname email")
+            .populate("created_by", "fullname email")
+            .populate("project", "title");
+
+        const io = req.app.get("io");
+        io.emit("task:updated", task);
+
         res.status(200).json(task);
     } catch (error) {
         res.status(500).json({ message: "Error updating task", error: error.message });
@@ -95,10 +112,28 @@ export const deleteTask = async (req, res) => {
 
         if (existingTask.asset) removeFile(existingTask.asset);
 
-        const task = await Task.findByIdAndDelete(id);
+        await Task.findByIdAndDelete(id);
+
+        const io = req.app.get("io");
+        io.emit("task:deleted", { id });
 
         res.status(200).json({ message: "Task deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: "Error deleting task", error: error.message });
     }
 };
+
+
+// ? FRONTEND
+
+// socket.on("task:created", (task) => {
+//     // Add to task list
+// });
+
+// socket.on("task:updated", (task) => {
+//     // Update task in state
+// });
+
+// socket.on("task:deleted", ({ id }) => {
+//     // Remove task by ID
+// });

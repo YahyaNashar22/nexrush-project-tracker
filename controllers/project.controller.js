@@ -9,7 +9,13 @@ export const createProject = async (req, res) => {
         }
 
         const project = await Project.create({ title, description, progress, assignees, deadline });
-        res.status(201).json(project);
+
+        const populatedProject = await project.populate("assignees", "fullname email profile_picture");
+
+        const io = req.app.get("io");
+        io.emit("project:created", populatedProject);
+
+        res.status(201).json(populatedProject);
     } catch (error) {
         res.status(500).json({ message: "Error creating project", error: error.message });
     }
@@ -40,9 +46,12 @@ export const getProjectById = async (req, res) => {
 export const updateProject = async (req, res) => {
     try {
         const { id } = req.params;
-        const updated = await Project.findByIdAndUpdate(id, req.body, { new: true });
+        const updated = await Project.findByIdAndUpdate(id, req.body, { new: true }).populate("assignees", "fullname email profile_picture");
 
         if (!updated) return res.status(404).json({ message: "Project not found" });
+
+        const io = req.app.get("io");
+        io.emit("project:updated", updated);
 
         res.status(200).json(updated);
     } catch (error) {
@@ -57,8 +66,25 @@ export const deleteProject = async (req, res) => {
 
         if (!deleted) return res.status(404).json({ message: "Project not found" });
 
+        const io = req.app.get("io");
+        io.emit("project:deleted", { id });
+
         res.status(200).json({ message: "Project deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: "Error deleting project", error: error.message });
     }
 };
+
+
+// ? FRONTEND
+socket.on("project:created", (project) => {
+    // Add to project list
+});
+
+socket.on("project:updated", (project) => {
+    // Update project in state
+});
+
+socket.on("project:deleted", ({ id }) => {
+    // Remove project by ID
+});

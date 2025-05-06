@@ -82,6 +82,7 @@ export const updateComment = async (req, res) => {
 
 
 
+// ? FRONTEND
 
 // ✅ 3. Listen for Events in the Frontend
 // In your React app (or any frontend), connect to Socket.IO:
