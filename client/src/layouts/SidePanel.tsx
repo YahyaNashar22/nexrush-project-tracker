@@ -1,9 +1,15 @@
 import { useState } from "react";
-import { LogOut, Menu, Home, Folder, List } from "lucide-react"; // icons (optional)
+import { LogOut, Menu, Folder } from "lucide-react"; // icons (optional)
 import SideBarItem from "../components/SideBarItem";
 
+import logo from "../assets/logo.png";
+import IProject from "../interfaces/IProject";
+import Loading from "../components/Loading";
+
 const SidePanel = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [projects, setProjects] = useState<IProject[]>([]);
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
 
@@ -18,9 +24,9 @@ const SidePanel = () => {
         <span
           className={`text-xl font-bold transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
-          }`}
+          }  rounded-full`}
         >
-          NexRush
+          <img src={logo} width={60} />
         </span>
         <button onClick={toggleSidebar} className="absolute right-10">
           <Menu className="h-6 w-6 text-font-white" />
@@ -29,9 +35,8 @@ const SidePanel = () => {
 
       {/* Middle: Navigation */}
       <nav className="flex-1 px-2 py-4 space-y-2">
-        <SideBarItem icon={<Home />} text="Home" isOpen={isOpen} />
+        {!loading ? <p>asd</p> : <Loading />}
         <SideBarItem icon={<Folder />} text="Projects" isOpen={isOpen} />
-        <SideBarItem icon={<List />} text="Tasks" isOpen={isOpen} />
       </nav>
 
       {/* Bottom: User Info and Logout */}
