@@ -32,7 +32,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
         origin: ["http://localhost:5173"],
-        methods: ["GET", "POST", "PUT", "DELETE"]
+        methods: ["GET", "POST", "PUT", "DELETE"],
+        credentials: true,
+        optionsSuccessStatus: 200,
     }
 });
 
@@ -81,7 +83,7 @@ app.use('/api/comment', commentRouter);
 
 
 // Connect to server
-app.listen(process.env.PORT, (error) => {
+server.listen(process.env.PORT, (error) => {
     if (!error) {
         console.log(`Server Running On Port: ${process.env.PORT}`);
     } else {

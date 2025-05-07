@@ -1,12 +1,38 @@
-import { useState } from "react";
+import axios, { AxiosError } from "axios";
+import { useEffect, useState } from "react";
+import ProjectFormData from "../interfaces/IProjectFormData";
+import { socket } from "../socket";
 
 const AddNewProject = () => {
-  const [formData, setFormData] = useState({
+  const backend = import.meta.env.VITE_BACKEND;
+
+  const [loading, setLoading] = useState<boolean>(false);
+  const [submitting, setSubmitting] = useState<boolean>(false);
+
+  const [users, setUsers] = useState<{ _id: string; fullname: string }[]>([]);
+
+  const [formData, setFormData] = useState<ProjectFormData>({
     title: "",
     description: "",
     assignees: [],
     deadline: "",
+    thumbnail: null,
   });
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const res = await axios(`${backend}/user`);
+        setUsers(res.data);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchUsers();
+  }, [backend]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -17,10 +43,33 @@ const AddNewProject = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Submit logic here (e.g., POST to API)
-    console.log(formData);
+    try {
+      setSubmitting(true);
+
+      const payload = new FormData();
+      payload.append("title", formData.title);
+      payload.append("description", formData.description);
+      payload.append("deadline", formData.deadline);
+      formData.assignees.forEach((id) => payload.append("assignees", id));
+      if (formData.thumbnail) {
+        payload.append("thumbnail", formData.thumbnail);
+      }
+
+      const res = await axios.post(`${backend}/project`, payload, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      socket.emit("project:created", res.data);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+      }
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -51,16 +100,38 @@ const AddNewProject = () => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-1">
-            Assignees (comma separated IDs or emails)
-          </label>
+          <label className="block text-sm font-medium mb-1">Thumbnail</label>
           <input
-            name="assignees"
-            value={formData.assignees}
-            onChange={handleChange}
-            className="w-full px-3 py-2 rounded bg-[#3a3a3a] border border-gray-700 focus:outline-none"
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null;
+              setFormData((prev) => ({ ...prev, thumbnail: file }));
+            }}
+            className="w-full px-3 py-2 rounded bg-[#3a3a3a] border border-gray-700 text-white"
           />
         </div>
+
+        <label className="block mb-2 text-sm font-medium">Assignees</label>
+        <select
+          multiple
+          value={formData.assignees}
+          onChange={(e) => {
+            const selected = Array.from(
+              e.target.selectedOptions,
+              (option) => option.value
+            );
+            setFormData((prev) => ({ ...prev, assignees: selected }));
+          }}
+          className="w-full p-2 rounded bg-gray-800 text-white"
+        >
+          {!loading &&
+            users.map((user) => (
+              <option key={user._id} value={user._id}>
+                {user.fullname}
+              </option>
+            ))}
+        </select>
 
         <div>
           <label className="block text-sm font-medium mb-1">Deadline</label>
@@ -76,6 +147,7 @@ const AddNewProject = () => {
 
         <button
           type="submit"
+          disabled={submitting}
           className="mt-4 px-4 py-2 bg-[#646cff] hover:bg-[#535bf2] text-white font-medium rounded"
         >
           Create Project

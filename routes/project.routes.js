@@ -10,10 +10,10 @@ import { upload } from "../middlewares/multer.js";
 
 const projectRouter = express.Router();
 
-projectRouter.post("/", upload('thumbnail'), createProject);
+projectRouter.post("/", upload.single('thumbnail'), createProject);
 projectRouter.get("/", getAllProjects);
 projectRouter.get("/:id", getProjectById);
-projectRouter.put("/:id", upload('thumbnail'), updateProject);
+projectRouter.put("/:id", upload.single('thumbnail'), updateProject);
 projectRouter.delete("/:id", deleteProject);
 
 export default projectRouter;

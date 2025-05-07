@@ -1,16 +1,17 @@
 import Project from "../models/project.model.js";
 import Task from "../models/task.model.js";
+import removeFile from "../utils/removeFile.js";
 
 export const createProject = async (req, res) => {
     try {
-        const { title, description, progress, deadline } = req.body;
+        const { title, description, progress, assignees, deadline } = req.body;
         const thumbnail = req.file?.filename;
 
         if (!title || !description || !deadline) {
             return res.status(400).json({ message: "All fields are required." });
         }
 
-        const project = await Project.create({ title, description, progress, thumbnail, deadline });
+        const project = await Project.create({ title, description, progress, thumbnail, assignees, deadline });
 
         const populatedProject = await project.populate("assignees", "fullname email profile_picture");
 
@@ -84,6 +85,9 @@ export const deleteProject = async (req, res) => {
 
         const existingProject = await Project.findById(id);
         if (!existingProject) return res.status(404).json({ message: "Project not found" });
+
+        if (existingProject.thumbnail) removeFile(existingProject.thumbnail)
+
 
         await Task.deleteMany({ project: id });
 

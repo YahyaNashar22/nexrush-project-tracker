@@ -8,6 +8,7 @@ import SideBarItem from "../components/SideBarItem";
 import logo from "../assets/logo.png";
 import IProject from "../interfaces/IProject";
 import Loading from "../components/Loading";
+import { socket } from "../socket";
 
 const SidePanel = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -21,7 +22,7 @@ const SidePanel = () => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${backend}/api/project`);
+        const res = await axios.get(`${backend}/project`);
         setProjects(res.data);
       } catch (error) {
         console.log(error);
@@ -36,6 +37,20 @@ const SidePanel = () => {
     fetchProjects();
   }, [backend]);
 
+  // ✅ Real-time update: Listen for new project creation
+  useEffect(() => {
+    socket.connect();
+
+    socket.on("project:created", (newProject: IProject) => {
+      setProjects((prev) => [newProject, ...prev]);
+    });
+
+    return () => {
+      socket.off("project:created");
+      socket.disconnect();
+    };
+  }, []);
+
   const toggleSidebar = () => setIsOpen((prev) => !prev);
 
   return (
@@ -47,7 +62,7 @@ const SidePanel = () => {
       {/* Top: Logo & Toggle */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <span
-        onClick={() => navigate('/')}
+          onClick={() => navigate("/")}
           className={`text-xl font-bold transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
           }  rounded-full`}
