@@ -27,6 +27,8 @@
 
 @theme {
   --color-bg: #242424;
+  --color-bg-semi: #242424AA;
+
   --color-bg-white: #f9f9f9;
   --color-bg-btn: #1a1a1a;
 

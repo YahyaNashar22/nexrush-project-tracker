@@ -1,4 +1,4 @@
-interface ProjectFormData {
+interface IProjectFormData {
   title: string;
   description: string;
   assignees: string[];
@@ -6,4 +6,4 @@ interface ProjectFormData {
   thumbnail?: File | null;
 }
 
-export default ProjectFormData;
+export default IProjectFormData;

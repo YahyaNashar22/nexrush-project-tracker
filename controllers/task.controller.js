@@ -52,6 +52,23 @@ export const getAllTasks = async (req, res) => {
     }
 };
 
+
+export const getProjectTasks = async (req, res) => {
+    try {
+        const { projectId } = req.params;
+
+        const tasks = await Task.find({ project: projectId })
+            .populate("assignee", "fullname email")
+            .populate("created_by", "fullname email")
+            .populate("project", "title");
+
+        res.status(200).json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching tasks", error: error.message });
+    }
+};
+
+
 export const getTaskById = async (req, res) => {
     try {
         const task = await Task.findById(req.params.id)

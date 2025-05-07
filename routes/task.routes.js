@@ -5,7 +5,8 @@ import {
     getAllTasks,
     getTaskById,
     updateTask,
-    deleteTask
+    deleteTask,
+    getProjectTasks
 } from "../controllers/task.controller.js";
 import { upload } from "../middlewares/multer.js";
 
@@ -15,6 +16,8 @@ const taskRouter = express.Router();
 taskRouter.post("/", upload.single('asset'), createTask);
 taskRouter.get("/", getAllTasks);
 taskRouter.get("/:id", getTaskById);
+taskRouter.get("/project/:id", getProjectTasks);
+
 taskRouter.put("/:id", upload.single('asset'), updateTask);
 taskRouter.delete("/:id", deleteTask);
 

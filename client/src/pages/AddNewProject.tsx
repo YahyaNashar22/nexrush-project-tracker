@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-import ProjectFormData from "../interfaces/IProjectFormData";
+import IProjectFormData from "../interfaces/IProjectFormData";
 import { socket } from "../socket";
 
 const AddNewProject = () => {
@@ -11,7 +11,7 @@ const AddNewProject = () => {
 
   const [users, setUsers] = useState<{ _id: string; fullname: string }[]>([]);
 
-  const [formData, setFormData] = useState<ProjectFormData>({
+  const [formData, setFormData] = useState<IProjectFormData>({
     title: "",
     description: "",
     assignees: [],
