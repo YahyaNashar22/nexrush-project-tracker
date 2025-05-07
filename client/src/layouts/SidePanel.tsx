@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { LogOut, Menu, Folder } from "lucide-react"; // icons (optional)
+import { useEffect, useState } from "react";
+import { LogOut, Menu, Folder } from "lucide-react";
+import axios, { AxiosError } from "axios";
+import { Link, useNavigate } from "react-router-dom";
+
 import SideBarItem from "../components/SideBarItem";
 
 import logo from "../assets/logo.png";
@@ -7,9 +10,31 @@ import IProject from "../interfaces/IProject";
 import Loading from "../components/Loading";
 
 const SidePanel = () => {
+  const backend = import.meta.env.VITE_BACKEND;
+  const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState<boolean>(true);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [projects, setProjects] = useState<IProject[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setLoading(true);
+        const res = await axios.get(`${backend}/api/project`);
+        setProjects(res.data);
+      } catch (error) {
+        console.log(error);
+        if (error instanceof AxiosError) {
+          alert(error.response?.data.message);
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, [backend]);
 
   const toggleSidebar = () => setIsOpen((prev) => !prev);
 
@@ -22,6 +47,7 @@ const SidePanel = () => {
       {/* Top: Logo & Toggle */}
       <div className="flex items-center justify-between p-4 border-b border-border">
         <span
+        onClick={() => navigate('/')}
           className={`text-xl font-bold transition-opacity duration-300 ${
             isOpen ? "opacity-100" : "opacity-0"
           }  rounded-full`}
@@ -35,9 +61,26 @@ const SidePanel = () => {
 
       {/* Middle: Navigation */}
       <nav className="flex-1 px-2 py-4 space-y-2">
-        {!loading ? <p>asd</p> : <Loading />}
-        <SideBarItem icon={<Folder />} text="Projects" isOpen={isOpen} />
+        {loading ? (
+          <Loading />
+        ) : (
+          projects.map((project) => (
+            <SideBarItem
+              key={project._id}
+              icon={<Folder />}
+              text={project.title}
+              isOpen={isOpen}
+            />
+          ))
+        )}
       </nav>
+
+      <Link
+        to="/add-new-project"
+        className="text-white text-center bg-blue hover:bg-blue-hover p-2 transition-all duration-300"
+      >
+        Add New
+      </Link>
 
       {/* Bottom: User Info and Logout */}
       <div className="p-4 border-t border-border flex items-center justify-between">

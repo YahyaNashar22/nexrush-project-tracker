@@ -12,9 +12,14 @@ const projectSchema = new Schema(
             type: String,
             required: true,
         },
+        thumbnail: {
+            type: String,
+            required: false,
+        },
         progress: {
             type: Number,
             required: true,
+            default: 0
         },
         assignees: [{
             type: Schema.Types.ObjectId,

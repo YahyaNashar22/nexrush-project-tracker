@@ -6,13 +6,14 @@ import {
     updateProject,
     deleteProject
 } from "../controllers/project.controller.js";
+import { upload } from "../middlewares/multer.js";
 
 const projectRouter = express.Router();
 
-projectRouter.post("/", createProject);
+projectRouter.post("/", upload('thumbnail'), createProject);
 projectRouter.get("/", getAllProjects);
 projectRouter.get("/:id", getProjectById);
-projectRouter.put("/:id", updateProject);
+projectRouter.put("/:id", upload('thumbnail'), updateProject);
 projectRouter.delete("/:id", deleteProject);
 
 export default projectRouter;

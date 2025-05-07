@@ -3,13 +3,14 @@ import Task from "../models/task.model.js";
 
 export const createProject = async (req, res) => {
     try {
-        const { title, description, progress, assignees, deadline } = req.body;
+        const { title, description, progress, deadline } = req.body;
+        const thumbnail = req.file?.filename;
 
-        if (!title || !description || progress == 0 || !deadline) {
+        if (!title || !description || !deadline) {
             return res.status(400).json({ message: "All fields are required." });
         }
 
-        const project = await Project.create({ title, description, progress, assignees, deadline });
+        const project = await Project.create({ title, description, progress, thumbnail, deadline });
 
         const populatedProject = await project.populate("assignees", "fullname email profile_picture");
 
@@ -47,14 +48,31 @@ export const getProjectById = async (req, res) => {
 export const updateProject = async (req, res) => {
     try {
         const { id } = req.params;
-        const updated = await Project.findByIdAndUpdate(id, req.body, { new: true }).populate("assignees", "fullname email profile_picture");
 
-        if (!updated) return res.status(404).json({ message: "Project not found" });
+        const existingProject = await Project.findById(id);
+        if (!existingProject) return res.status(404).json({ message: "Project not found." });
+
+        const { title, description, deadline, assignees } = req.body;
+
+        let updateData = {};
+
+        if (title) updateData.title = title;
+        if (description) updateData.description = description;
+        if (deadline) updateData.deadline = deadline;
+        if (assignees) updateData.assignee = assignees;
+
+        const thumbnail = req.file?.filename;
+        if (thumbnail && existingProject.thumbnail) {
+            removeFile(existingProject.thumbnail);
+            updateData.thumbnail = thumbnail;
+        }
+
+        const project = await Project.findByIdAndUpdate(id, updateData, { new: true })
 
         const io = req.app.get("io");
-        io.emit("project:updated", updated);
+        io.emit("project:updated", project);
 
-        res.status(200).json(updated);
+        res.status(200).json(project);
     } catch (error) {
         res.status(500).json({ message: "Error updating project", error: error.message });
     }
