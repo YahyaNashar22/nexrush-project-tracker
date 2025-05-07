@@ -6,6 +6,7 @@ import HomeLayout from "../layouts/HomeLayout";
 const AppRoutes = () => {
   const Home = lazy(() => import("../pages/Home"));
   const AddNewProject = lazy(() => import("../pages/AddNewProject"));
+  const ProjectView = lazy(() => import("../pages/ProjectView"));
 
   return (
     <Suspense fallback={<div className="text-white p-4">Loading...</div>}>
@@ -13,6 +14,7 @@ const AppRoutes = () => {
         <Route path="/" element={<HomeLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/add-new-project" element={<AddNewProject />} />
+          <Route path="/project/:id" element={<ProjectView />} />
         </Route>
       </Routes>
     </Suspense>

@@ -26,8 +26,8 @@ export const createProject = async (req, res) => {
 
 export const getAllProjects = async (req, res) => {
     try {
-        const projects = await Project.find().populate("assignees", "fullname email profile_picture");
-        res.status(200).json(projects);
+        const projects = await Project.find().sort({ createdAt: -1 }).populate("assignees", "fullname email profile_picture");
+        res.status(200).json(projects)
     } catch (error) {
         res.status(500).json({ message: "Error fetching projects", error: error.message });
     }

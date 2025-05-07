@@ -63,9 +63,9 @@ const SidePanel = () => {
       <div className="flex items-center justify-between p-4 border-b border-border">
         <span
           onClick={() => navigate("/")}
-          className={`text-xl font-bold transition-opacity duration-300 ${
-            isOpen ? "opacity-100" : "opacity-0"
-          }  rounded-full`}
+          className={`text-xl font-bold transition-opacity duration-300 
+            ${isOpen ? "opacity-100" : "opacity-0"}  
+          rounded-full`}
         >
           <img src={logo} width={60} />
         </span>
@@ -82,6 +82,7 @@ const SidePanel = () => {
           projects.map((project) => (
             <SideBarItem
               key={project._id}
+              id={project._id}
               icon={<Folder />}
               text={project.title}
               isOpen={isOpen}

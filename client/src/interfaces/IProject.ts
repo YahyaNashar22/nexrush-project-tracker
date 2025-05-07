@@ -5,7 +5,7 @@ interface IProject {
   progress: number;
   assignees: string[];
   deadline: Date;
-  created_at: Date;
+  createdAt: Date;
 }
 
 export default IProject;
