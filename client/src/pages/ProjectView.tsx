@@ -7,10 +7,10 @@ import CreateTaskModal from "../components/CreateTaskModal";
 import axiosInstance from "../utils/axiosInstance";
 import { socket } from "../socket";
 import TaskList from "../components/TaskList";
+import AssigneesList from "../components/AssigneesList";
 
 const ProjectView = () => {
   const backend = import.meta.env.VITE_BACKEND;
-  const no_api_backend = import.meta.env.VITE_SOCKET_BACKEND;
 
   const { id } = useParams();
 
@@ -101,6 +101,10 @@ const ProjectView = () => {
 
       <p className="text-soft-white mb-4">{project.description}</p>
 
+      <div className="text-sm text-soft-white">
+        <p>Created: {new Date(project.createdAt).toLocaleString()}</p>
+      </div>
+
       <div className="flex gap-4 items-center my-6">
         <button
           onClick={() => setShowModal(true)}
@@ -110,30 +114,7 @@ const ProjectView = () => {
         </button>
       </div>
 
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold mb-2">Assignees:</h2>
-        <ul className="space-y-3">
-          {project.assignees.map((assignee) => (
-            <li key={assignee._id} className="flex items-center space-x-4">
-              {assignee.profile_picture && (
-                <img
-                  src={`${no_api_backend}/images/${assignee.profile_picture}`}
-                  alt={assignee.fullname}
-                  className="w-10 h-10 rounded-full object-cover"
-                />
-              )}
-              <div>
-                <p className="font-medium">{assignee.fullname}</p>
-                <p className="text-sm text-soft-white">{assignee.email}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="text-sm text-soft-white">
-        <p>Created: {new Date(project.createdAt).toLocaleString()}</p>
-      </div>
+      <AssigneesList project={project} />
 
       <TaskList tasks={tasks} />
 

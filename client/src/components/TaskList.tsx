@@ -38,7 +38,7 @@ const TaskList: React.FC<Props> = ({ tasks }) => {
       {filteredTasks.length === 0 ? (
         <p className="text-soft-white">No tasks found for "{filter}".</p>
       ) : (
-        <ul className="space-y-4">
+        <ul className="space-y-4 h-96 overflow-auto">
           {filteredTasks.map((task) => (
             <li key={task._id}>
               <TaskCard task={task} />
