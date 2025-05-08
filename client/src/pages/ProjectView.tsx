@@ -66,6 +66,17 @@ const ProjectView = () => {
     };
   }, []);
 
+  const calculateProgress = (tasks: ITask[]) => {
+    const relevantTasks = tasks.filter((task) => task.status !== "canceled");
+    const completedTasks = relevantTasks.filter(
+      (task) => task.status === "completed"
+    );
+
+    if (relevantTasks.length === 0) return 0;
+
+    return Math.round((completedTasks.length / relevantTasks.length) * 100);
+  };
+
   if (loading) return <Loading />;
 
   if (!project)
@@ -73,7 +84,21 @@ const ProjectView = () => {
 
   return (
     <main className="p-6 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4">{project.title}</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-3xl font-bold mb-4">{project.title}</h1>
+        <div className="mb-4">
+          <p className="text-xl text-soft-white mb-2">
+            Progress: {calculateProgress(tasks)}%
+          </p>
+          <div className="w-full h-4 bg-soft-white rounded-full overflow-hidden">
+            <div
+              className="h-full bg-blue transition-all duration-500"
+              style={{ width: `${calculateProgress(tasks)}%` }}
+            />
+          </div>
+        </div>
+      </div>
+
       <p className="text-soft-white mb-4">{project.description}</p>
 
       <div className="flex gap-4 items-center my-6">
