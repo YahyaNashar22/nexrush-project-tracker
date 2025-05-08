@@ -4,9 +4,9 @@ import IProject from "../interfaces/IProject";
 import Loading from "../components/Loading";
 import ITask from "../interfaces/ITask";
 import CreateTaskModal from "../components/CreateTaskModal";
-import TaskCard from "../components/TaskCard";
 import axiosInstance from "../utils/axiosInstance";
 import { socket } from "../socket";
+import TaskList from "../components/TaskList";
 
 const ProjectView = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -135,21 +135,7 @@ const ProjectView = () => {
         <p>Created: {new Date(project.createdAt).toLocaleString()}</p>
       </div>
 
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold mb-4">Tasks</h2>
-
-        {tasks.length === 0 ? (
-          <p className="text-soft-white">No tasks have been added yet.</p>
-        ) : (
-          <ul className="space-y-4">
-            {tasks.map((task) => (
-              <li key={task._id}>
-                <TaskCard task={task} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <TaskList tasks={tasks} />
 
       {showModal && (
         <CreateTaskModal
