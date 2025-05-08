@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import IProject from "../interfaces/IProject";
-import axios from "axios";
 import Loading from "../components/Loading";
 import ITask from "../interfaces/ITask";
 import CreateTaskModal from "../components/CreateTaskModal";
+import TaskCard from "../components/TaskCard";
+import axiosInstance from "../utils/axiosInstance";
 
 const ProjectView = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -21,7 +22,7 @@ const ProjectView = () => {
     const fetchProject = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${backend}/project/${id}`);
+        const res = await axiosInstance.get(`${backend}/project/${id}`);
         setProject(res.data);
       } catch (error) {
         console.log(error);
@@ -38,7 +39,7 @@ const ProjectView = () => {
     const fetchTasks = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${backend}/task/project/${id}`);
+        const res = await axiosInstance.get(`${backend}/task/project/${id}`);
         setTasks(res.data);
       } catch (error) {
         console.log(error);
@@ -92,6 +93,22 @@ const ProjectView = () => {
 
       <div className="text-sm text-soft-white">
         <p>Created: {new Date(project.createdAt).toLocaleString()}</p>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-semibold mb-4">Tasks</h2>
+
+        {tasks.length === 0 ? (
+          <p className="text-soft-white">No tasks have been added yet.</p>
+        ) : (
+          <ul className="space-y-4">
+            {tasks.map((task) => (
+              <li key={task._id}>
+                <TaskCard task={task} />
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {showModal && (

@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 
 import User from "../models/user.model.js";
-import { createAccessToken, createRefreshToken, verifyToken } from "../utils/token.js";
+import { createAccessToken, createRefreshToken, verifyRefreshToken } from "../utils/token.js";
 import removeFile from "../utils/removeFile.js";
 
 // Sign up
@@ -77,7 +77,7 @@ export const refreshAccessToken = async (req, res) => {
     const token = req.cookies.refreshToken;
     if (!token) return res.status(401).json({ message: "No refresh token provided." });
 
-    const result = verifyToken(token, process.env.REFRESH_TOKEN_SECRET);
+    const result = verifyRefreshToken(token);
 
     if (!result.success) return res.status(403).json({ message: "Invalid refresh token." });
 

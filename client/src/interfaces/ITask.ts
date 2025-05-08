@@ -7,7 +7,7 @@ interface ITask {
   status: "pending" | "completed" | "canceled" | "in progress";
   deadline: string;
   asset?: File | null;
-  assignee: IUser[];
+  assignee: IUser;
   created_by: IUser;
   project: string;
 }

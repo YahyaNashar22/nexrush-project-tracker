@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import ITask from "../interfaces/ITask";
 import useUserStore from "../context/userStore";
+import axiosInstance from "../utils/axiosInstance";
 
 interface Props {
   projectId: string;
@@ -28,7 +28,7 @@ const CreateTaskModal = ({ projectId, onClose, onTaskCreated }: Props) => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const res = await axios(`${backend}/user`);
+        const res = await axiosInstance.get(`${backend}/user`);
         setUsers(res.data);
       } catch (error) {
         console.log(error);
@@ -62,7 +62,7 @@ const CreateTaskModal = ({ projectId, onClose, onTaskCreated }: Props) => {
         formData.append("asset", asset);
       }
 
-      const res = await axios.post(`${backend}/task`, formData, {
+      const res = await axiosInstance.post(`${backend}/task`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

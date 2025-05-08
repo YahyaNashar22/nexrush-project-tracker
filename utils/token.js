@@ -29,3 +29,14 @@ export const verifyToken = (token) => {
         return { success: false, error: error.message };
     }
 }
+
+
+// Verify Refresh Token
+export const verifyRefreshToken = (token) => {
+    try {
+        const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+        return { success: true, payload: decoded };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+};

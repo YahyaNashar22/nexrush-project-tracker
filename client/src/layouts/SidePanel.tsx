@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { LogOut, Menu, Folder } from "lucide-react";
-import axios, { AxiosError } from "axios";
+import { Menu, Folder } from "lucide-react";
+import  { AxiosError } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
 import SideBarItem from "../components/SideBarItem";
@@ -9,6 +9,8 @@ import logo from "../assets/logo.png";
 import IProject from "../interfaces/IProject";
 import Loading from "../components/Loading";
 import { socket } from "../socket";
+import AuthButtons from "../components/AuthButtons";
+import axiosInstance from "../utils/axiosInstance";
 
 const SidePanel = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -22,7 +24,7 @@ const SidePanel = () => {
     const fetchProjects = async () => {
       try {
         setLoading(true);
-        const res = await axios.get(`${backend}/project`);
+        const res = await axiosInstance.get(`${backend}/project`);
         setProjects(res.data);
       } catch (error) {
         console.log(error);
@@ -98,18 +100,8 @@ const SidePanel = () => {
         Add New
       </Link>
 
-      {/* Bottom: User Info and Logout */}
-      <div className="p-4 border-t border-border flex items-center justify-between">
-        {isOpen && (
-          <div>
-            <div className="text-sm font-semibold">John Doe</div>
-            <div className="text-xs text-secondary-grey">john@example.com</div>
-          </div>
-        )}
-        <button className="text-red hover:text-red-hover ml-auto">
-          <LogOut className="h-5 w-5" />
-        </button>
-      </div>
+      {/* Bottom: Auth Section */}
+      <AuthButtons isOpen={isOpen} />
     </div>
   );
 };

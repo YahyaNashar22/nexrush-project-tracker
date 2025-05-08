@@ -1,7 +1,8 @@
-import axios, { AxiosError } from "axios";
+import  { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import IProjectFormData from "../interfaces/IProjectFormData";
 import { socket } from "../socket";
+import axiosInstance from "../utils/axiosInstance";
 
 const AddNewProject = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -23,7 +24,7 @@ const AddNewProject = () => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const res = await axios(`${backend}/user`);
+        const res = await axiosInstance.get(`${backend}/user`);
         setUsers(res.data);
       } catch (error) {
         console.log(error);
@@ -57,7 +58,7 @@ const AddNewProject = () => {
         payload.append("thumbnail", formData.thumbnail);
       }
 
-      const res = await axios.post(`${backend}/project`, payload, {
+      const res = await axiosInstance.post(`${backend}/project`, payload, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
