@@ -3,8 +3,10 @@ import { lazy, Suspense } from "react";
 
 import HomeLayout from "../layouts/HomeLayout";
 import ProtectedRoutes from "./ProtectedRoutes";
+import useUserStore from "../context/userStore";
 
 const AppRoutes = () => {
+  const { user } = useUserStore();
   const Home = lazy(() => import("../pages/Home"));
   const AddNewProject = lazy(() => import("../pages/AddNewProject"));
   const ProjectView = lazy(() => import("../pages/ProjectView"));
@@ -20,8 +22,7 @@ const AppRoutes = () => {
             <Route path="/project/:id" element={<ProjectView />} />
           </Route>
         </Route>
-
-        <Route path="/sign-in" element={<Signin />} />
+        {user && <Route path="/sign-in" element={<Signin />} />}
       </Routes>
     </Suspense>
   );

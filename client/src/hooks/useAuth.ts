@@ -14,8 +14,6 @@ const useAuth = () => {
           withCredentials: true,
         });
 
-        console.log("Refresh response", res.data);
-
         const { accessToken, user } = res.data;
         setUser(user, accessToken); // ✅ Will save to Zustand and localStorage
       } catch (error) {

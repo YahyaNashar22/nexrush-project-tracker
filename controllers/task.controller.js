@@ -5,9 +5,9 @@ import removeFile from "../utils/removeFile.js"
 
 export const createTask = async (req, res) => {
     try {
-        const { title, description, status, deadline, assignee, created_by, project } = req.body;
+        const { title, description, deadline, assignee, created_by, project } = req.body;
 
-        if (!title || !deadline || !assignee || !created_by || !project) {
+        if (!title || !deadline || !created_by || !project) {
             return res.status(400).json({ message: "All fields are required." });
         }
 
@@ -16,7 +16,6 @@ export const createTask = async (req, res) => {
         const task = await Task.create({
             title,
             description,
-            status,
             deadline,
             assignee,
             asset,
@@ -55,9 +54,9 @@ export const getAllTasks = async (req, res) => {
 
 export const getProjectTasks = async (req, res) => {
     try {
-        const { projectId } = req.params;
+        const { id } = req.params;
 
-        const tasks = await Task.find({ project: projectId })
+        const tasks = await Task.find({ project: id })
             .populate("assignee", "fullname email")
             .populate("created_by", "fullname email")
             .populate("project", "title");

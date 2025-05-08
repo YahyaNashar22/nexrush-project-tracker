@@ -1,15 +1,14 @@
 import { useEffect, useState } from "react";
-import ITask from "../interfaces/ITask";
 import useUserStore from "../context/userStore";
 import axiosInstance from "../utils/axiosInstance";
+import { socket } from "../socket";
 
 interface Props {
   projectId: string;
   onClose: () => void;
-  onTaskCreated: (task: ITask) => void;
 }
 
-const CreateTaskModal = ({ projectId, onClose, onTaskCreated }: Props) => {
+const CreateTaskModal = ({ projectId, onClose }: Props) => {
   const backend = import.meta.env.VITE_BACKEND;
   const { user } = useUserStore();
 
@@ -55,7 +54,9 @@ const CreateTaskModal = ({ projectId, onClose, onTaskCreated }: Props) => {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("deadline", deadline);
-      formData.append("assignee", assignee);
+      if (assignee !== "") {
+        formData.append("assignee", assignee);
+      }
       formData.append("created_by", user._id);
       formData.append("project", projectId);
       if (asset) {
@@ -68,7 +69,7 @@ const CreateTaskModal = ({ projectId, onClose, onTaskCreated }: Props) => {
         },
       });
 
-      onTaskCreated(res.data);
+      socket.emit("task:created", res.data);
       onClose();
     } catch (err) {
       console.error(err);
@@ -117,6 +118,9 @@ const CreateTaskModal = ({ projectId, onClose, onTaskCreated }: Props) => {
               value={assignee}
               onChange={(e) => setAssignee(e.target.value)}
             >
+              <option value={""} className="text-bg">
+                Select User
+              </option>
               {users.map((u) => (
                 <option key={u._id} value={u._id} className="text-bg">
                   {u.fullname}

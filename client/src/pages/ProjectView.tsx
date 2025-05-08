@@ -6,6 +6,7 @@ import ITask from "../interfaces/ITask";
 import CreateTaskModal from "../components/CreateTaskModal";
 import TaskCard from "../components/TaskCard";
 import axiosInstance from "../utils/axiosInstance";
+import { socket } from "../socket";
 
 const ProjectView = () => {
   const backend = import.meta.env.VITE_BACKEND;
@@ -50,6 +51,20 @@ const ProjectView = () => {
 
     fetchTasks();
   }, [backend, project, id]);
+
+  // ✅ Real-time update: Listen for new task creation
+  useEffect(() => {
+    socket.connect();
+
+    socket.on("task:created", (newTask: ITask) => {
+      setTasks((prev) => [...prev, newTask]);
+    });
+
+    return () => {
+      socket.off("task:created");
+      socket.disconnect();
+    };
+  }, []);
 
   if (loading) return <Loading />;
 
@@ -115,7 +130,6 @@ const ProjectView = () => {
         <CreateTaskModal
           projectId={project._id}
           onClose={() => setShowModal(false)}
-          onTaskCreated={(newTask) => setTasks((prev) => [...prev, newTask])}
         />
       )}
     </main>

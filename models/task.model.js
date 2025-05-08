@@ -29,7 +29,7 @@ const taskSchema = new Schema(
         assignee: {
             type: Schema.Types.ObjectId,
             ref: "User",
-            required: true
+            required: false
         },
         created_by: {
             type: Schema.Types.ObjectId,
